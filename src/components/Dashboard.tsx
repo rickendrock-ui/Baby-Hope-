@@ -18,6 +18,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSelectModule }) => {
     { id: 'fruits', name: 'Buah & Sayur', icon: '🍎', bgGradient: 'from-orange-400 to-amber-600', borderColor: 'border-orange-700', shadowColor: 'shadow-orange-300' },
     { id: 'music', name: 'Mini Musik', icon: '🎹', bgGradient: 'from-pink-400 to-rose-500', borderColor: 'border-rose-600', shadowColor: 'shadow-pink-300' },
     { id: 'quiz', name: 'Tebak-Tebakan', icon: '🧩', bgGradient: 'from-violet-400 to-purple-600', borderColor: 'border-purple-700', shadowColor: 'shadow-purple-300' },
+    { id: 'matching', name: 'Pencocokan', icon: '🎯', bgGradient: 'from-cyan-400 to-blue-500', borderColor: 'border-blue-600', shadowColor: 'shadow-blue-300' },
   ];
 
   const handleChickClick = () => {
