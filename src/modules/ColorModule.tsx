@@ -1,117 +1,127 @@
-import { useState, useEffect } from 'react';
-import { ArrowLeft, Volume2, Sparkles } from 'lucide-react';
-import { playAudio } from '../utils/audio';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { COLORS_DATA, type ColorItem } from '../data/contentData';
+import { useAudio } from '../hooks/useAudio';
 
 interface ColorModuleProps {
   onBack: () => void;
-  onAddStar: () => void;
 }
 
-interface ColorItem {
-  id: string;
-  name: string;
-  bgClass: string;
-  borderClass: string;
-  exampleIcon: string;
-  exampleName: string;
-}
+export const ColorModule: React.FC<ColorModuleProps> = ({ onBack }) => {
+  const { speak, playSoundEffect } = useAudio();
+  const [activeColor, setActiveColor] = useState<ColorItem>(COLORS_DATA[0]);
+  const [mode, setMode] = useState<'learn' | 'game'>('learn');
+  const [targetColor, setTargetColor] = useState<ColorItem>(COLORS_DATA[0]);
+  const [celebrate, setCelebrate] = useState(false);
 
-const colorData: ColorItem[] = [
-  { id: 'merah', name: 'Merah', bgClass: 'bg-red-500', borderClass: 'border-red-700', exampleIcon: '🍎', exampleName: 'Apel' },
-  { id: 'biru', name: 'Biru', bgClass: 'bg-blue-500', borderClass: 'border-blue-700', exampleIcon: '🌊', exampleName: 'Laut' },
-  { id: 'kuning', name: 'Kuning', bgClass: 'bg-yellow-400', borderClass: 'border-yellow-600', exampleIcon: '🌻', exampleName: 'Bunga Matahari' },
-  { id: 'hijau', name: 'Hijau', bgClass: 'bg-emerald-500', borderClass: 'border-emerald-700', exampleIcon: '🍃', exampleName: 'Daun' },
-  { id: 'jingga', name: 'Jingga', bgClass: 'bg-orange-500', borderClass: 'border-orange-700', exampleIcon: '🍊', exampleName: 'Jeruk' },
-  { id: 'ungu', name: 'Ungu', bgClass: 'bg-purple-500', borderClass: 'border-purple-700', exampleIcon: '🍇', exampleName: 'Anggur' },
-  { id: 'pink', name: 'Merah Muda', bgClass: 'bg-pink-400', borderClass: 'border-pink-600', exampleIcon: '🌸', exampleName: 'Bunga Sakura' },
-  { id: 'cokelat', name: 'Cokelat', bgClass: 'bg-amber-800', borderClass: 'border-amber-950', exampleIcon: '🍫', exampleName: 'Cokelat' },
-  { id: 'hitam', name: 'Hitam', bgClass: 'bg-slate-900', borderClass: 'border-black', exampleIcon: '🐈‍⬛', exampleName: 'Kucing Hitam' },
-  { id: 'putih', name: 'Putih', bgClass: 'bg-slate-100', borderClass: 'border-slate-300', exampleIcon: '☁️', exampleName: 'Awan' },
-];
+  const startQuiz = () => {
+    const random = COLORS_DATA[Math.floor(Math.random() * COLORS_DATA.length)];
+    setTargetColor(random);
+    setCelebrate(false);
+    speak(`Mana yang berwarna ${random.name}?`);
+  };
 
-export default function ColorModule({ onBack, onAddStar }: ColorModuleProps) {
-  const [selectedColor, setSelectedColor] = useState<ColorItem | null>(null);
+  const handleSelectColor = (col: ColorItem) => {
+    playSoundEffect('pop');
+    setActiveColor(col);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.getVoices();
+    if (mode === 'learn') {
+      speak(`Warna ${col.name}! Seperti ${col.objectName}`);
+    } else {
+      if (col.name === targetColor.name) {
+        playSoundEffect('success');
+        setCelebrate(true);
+        speak(`Horeee! Benar sekali, ini warna ${col.name}!`);
+        setTimeout(() => {
+          startQuiz();
+        }, 2000);
+      } else {
+        speak(`Yuk coba lagi! Cari warna ${targetColor.name}`);
+      }
     }
-  }, []);
-
-  const handleSelectColor = (item: ColorItem) => {
-    setSelectedColor(item);
-    playAudio(item.name);
-    onAddStar();
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-4">
-      <div className="flex items-center justify-between mb-6">
+    <div className="w-full max-w-4xl bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-2xl border-4 border-yellow-300 flex flex-col items-center">
+      <div className="w-full flex justify-between items-center mb-4">
         <button
           onClick={onBack}
-          type="button"
-          className="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl shadow-sm border-2 border-slate-200 hover:bg-slate-50 font-bold text-slate-700 active:scale-95 transition"
+          className="bg-yellow-500 hover:bg-yellow-600 text-white font-extrabold px-5 py-2.5 rounded-full shadow-md transition active:scale-95 flex items-center gap-2 text-base"
         >
-          <ArrowLeft size={20} />
-          <span>{"Kembali"}</span>
+          ⬅️ Menu Utama
         </button>
-
-        <h2 className="text-2xl font-black text-amber-500 flex items-center gap-2">
-          <span>{"🌈"}</span>
-          <span>{"Belajar Warna"}</span>
-        </h2>
+        <div className="flex gap-2">
+          <button
+            onClick={() => { setMode('learn'); speak("Ayo mengenal warna-warni!"); }}
+            className={`px-4 py-2 rounded-full font-black text-sm transition ${
+              mode === 'learn' ? 'bg-amber-500 text-white shadow-md' : 'bg-gray-100 text-gray-600'
+            }`}
+          >
+            🎨 Belajar
+          </button>
+          <button
+            onClick={() => { setMode('game'); startQuiz(); }}
+            className={`px-4 py-2 rounded-full font-black text-sm transition ${
+              mode === 'game' ? 'bg-pink-500 text-white shadow-md' : 'bg-gray-100 text-gray-600'
+            }`}
+          >
+            🎮 Tebak Warna
+          </button>
+        </div>
       </div>
 
-      {selectedColor !== null && (
-        <div className="bg-white p-6 rounded-3xl shadow-xl border-4 border-amber-300 text-center mb-8 transition">
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-sm font-extrabold text-amber-700 bg-amber-100 px-3 py-1 rounded-full">
-              {selectedColor.name}
-            </span>
-            <button
-              onClick={() => playAudio(selectedColor.name)}
-              type="button"
-              className="bg-amber-100 p-3 rounded-full text-amber-600 hover:bg-amber-200 transition"
-              title="Putar Suara"
-            >
-              <Volume2 size={24} />
-            </button>
-          </div>
-
-          <div className={`${selectedColor.bgClass} w-32 h-32 mx-auto rounded-3xl shadow-lg border-4 ${selectedColor.borderClass} flex items-center justify-center text-6xl mb-4 transition transform hover:scale-110`}>
-            {selectedColor.exampleIcon}
-          </div>
-
-          <h3 className="text-3xl font-black text-slate-700 mb-1">
-            {selectedColor.name}
-          </h3>
-
-          <p className="text-slate-500 font-bold text-base mb-2">
-            {"Contoh: "} <span className="text-amber-600">{selectedColor.exampleName}</span>
-          </p>
-
-          <p className="text-slate-400 font-bold text-sm flex items-center justify-center gap-1 mt-3">
-            <Sparkles size={16} className="text-amber-400" />
-            <span>{"Kamu dapat +1 Bintang!"}</span>
-          </p>
-        </div>
-      )}
-
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-        {colorData.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => handleSelectColor(item)}
-            type="button"
-            className={`${item.bgClass} ${item.id === 'putih' ? 'text-slate-800' : 'text-white'} p-5 rounded-3xl shadow-lg border-b-8 ${item.borderClass} flex flex-col items-center justify-between transition transform hover:-translate-y-1 active:scale-95 min-h-[130px]`}
+      <div 
+        className="w-full h-56 rounded-3xl flex flex-col items-center justify-center text-white shadow-inner transition-colors duration-500 relative overflow-hidden my-2 border-4 border-white"
+        style={{ backgroundColor: mode === 'learn' ? activeColor.hex : targetColor.hex }}
+      >
+        {mode === 'learn' ? (
+          <motion.div 
+            key={activeColor.name}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="flex flex-col items-center text-center p-4 drop-shadow-lg"
           >
-            <span className="text-4xl my-1">{item.exampleIcon}</span>
-            <span className="text-xs font-black bg-black/20 text-white px-3 py-0.5 rounded-full mt-2">
-              {item.name}
-            </span>
-          </button>
+            <span className="text-7xl mb-2">{activeColor.icon}</span>
+            <h3 className="text-4xl font-black">{activeColor.name}</h3>
+            <p className="text-lg font-bold opacity-90">{activeColor.objectName}</p>
+          </motion.div>
+        ) : (
+          <div className="text-center p-4 drop-shadow-lg">
+            <span className="text-6xl mb-2 animate-bounce block">❓</span>
+            <h3 className="text-3xl font-black">Cari Warna {targetColor.name}!</h3>
+            <p className="text-sm font-bold opacity-90">Sentuh tombol warna di bawah ini:</p>
+          </div>
+        )}
+
+        <AnimatePresence>
+          {celebrate && (
+            <motion.div 
+              initial={{ scale: 0 }} 
+              animate={{ scale: 1 }} 
+              exit={{ scale: 0 }}
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm flex flex-col items-center justify-center text-white font-black text-4xl"
+            >
+              🎉 HEBAT SEKALI! ⭐
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <div className="grid grid-cols-4 sm:grid-cols-8 gap-3 w-full mt-4">
+        {COLORS_DATA.map((col: ColorItem) => (
+          <motion.button
+            key={col.name}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.85 }}
+            onClick={() => handleSelectColor(col)}
+            className="h-20 rounded-2xl flex flex-col items-center justify-center shadow-md border-b-4 border-black/20 text-white cursor-pointer select-none"
+            style={{ backgroundColor: col.hex }}
+          >
+            <span className="text-2xl">{col.icon}</span>
+            <span className="text-xs font-black drop-shadow">{col.name}</span>
+          </motion.button>
         ))}
       </div>
     </div>
   );
-}
+};

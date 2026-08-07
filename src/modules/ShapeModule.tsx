@@ -1,122 +1,71 @@
-import { useState, useEffect } from 'react';
-import { ArrowLeft, Volume2, Sparkles } from 'lucide-react';
-import { playAudio } from '../utils/audio';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { SHAPES_DATA, type ShapeItem } from '../data/contentData';
+import { useAudio } from '../hooks/useAudio';
 
 interface ShapeModuleProps {
   onBack: () => void;
-  onAddStar: () => void;
 }
 
-interface ShapeItem {
-  id: string;
-  name: string;
-  icon: string;
-  exampleIcon: string;
-  exampleName: string;
-  bgColor: string;
-  borderColor: string;
-}
+export const ShapeModule: React.FC<ShapeModuleProps> = ({ onBack }) => {
+  const { speak, playSoundEffect } = useAudio();
+  const [selectedShape, setSelectedShape] = useState<ShapeItem>(SHAPES_DATA[0]);
 
-const shapeData: ShapeItem[] = [
-  { id: 'lingkaran', name: 'Lingkaran', icon: '⭕', exampleIcon: '⚽', exampleName: 'Bola', bgColor: 'bg-red-400', borderColor: 'border-red-600' },
-  { id: 'persegi', name: 'Persegi', icon: '🟦', exampleIcon: '🪟', exampleName: 'Jendela', bgColor: 'bg-sky-400', borderColor: 'border-sky-600' },
-  { id: 'segitiga', name: 'Segitiga', icon: '🔺', exampleIcon: '🍕', exampleName: 'Potongan Pizza', bgColor: 'bg-amber-400', borderColor: 'border-amber-600' },
-  { id: 'bintang', name: 'Bintang', icon: '⭐', exampleIcon: '🌟', exampleName: 'Bintang Laut', bgColor: 'bg-yellow-400', borderColor: 'border-yellow-600' },
-  { id: 'hati', name: 'Hati', icon: '❤️', exampleIcon: '💖', exampleName: 'Kartu Kasih Sayang', bgColor: 'bg-pink-400', borderColor: 'border-pink-600' },
-  { id: 'lonjong', name: 'Lonjong', icon: '🥚', exampleIcon: '🥚', exampleName: 'Telur', bgColor: 'bg-orange-400', borderColor: 'border-orange-600' },
-  { id: 'persegi_panjang', name: 'Persegi Panjang', icon: '💳', exampleIcon: '📱', exampleName: 'Handphone', bgColor: 'bg-emerald-400', borderColor: 'border-emerald-600' },
-  { id: 'belah_ketupat', name: 'Belah Ketupat', icon: '🔷', exampleIcon: '🪅', exampleName: 'Ketupat', bgColor: 'bg-purple-400', borderColor: 'border-purple-600' },
-];
-
-export default function ShapeModule({ onBack, onAddStar }: ShapeModuleProps) {
-  const [selectedShape, setSelectedShape] = useState<ShapeItem | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.getVoices();
-    }
-  }, []);
-
-  const handleSelectShape = (item: ShapeItem) => {
-    setSelectedShape(item);
-    playAudio(item.name);
-    onAddStar();
+  const handleSelectShape = (shape: ShapeItem) => {
+    playSoundEffect('pop');
+    setSelectedShape(shape);
+    speak(`Bentuk ${shape.name}. ${shape.description}`);
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-4">
-      {/* Header Navigasi */}
-      <div className="flex items-center justify-between mb-6">
+    <div className="w-full max-w-4xl bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-2xl border-4 border-purple-300 flex flex-col items-center">
+      <div className="w-full flex justify-between items-center mb-6">
         <button
           onClick={onBack}
-          type="button"
-          className="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl shadow-sm border-2 border-slate-200 hover:bg-slate-50 font-bold text-slate-700 active:scale-95 transition"
+          className="bg-purple-500 hover:bg-purple-600 text-white font-extrabold px-5 py-2.5 rounded-full shadow-md transition active:scale-95 flex items-center gap-2 text-base"
         >
-          <ArrowLeft size={20} />
-          <span>{"Kembali"}</span>
+          ⬅️ Menu Utama
         </button>
-
-        <h2 className="text-2xl font-black text-purple-600 flex items-center gap-2">
-          <span>{"🔷"}</span>
-          <span>{"Mengenal Bentuk"}</span>
-        </h2>
+        <span className="bg-purple-100 text-purple-800 font-black px-4 py-1.5 rounded-full text-sm">
+          Bentuk Geometri
+        </span>
       </div>
 
-      {/* Detail Kartu Bentuk */}
-      {selectedShape && (
-        <div className="bg-white p-6 rounded-3xl shadow-xl border-4 border-purple-300 text-center mb-8 transition">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-extrabold text-purple-600 bg-purple-100 px-3 py-1 rounded-full">
-              {selectedShape.name}
-            </span>
-            <button
-              onClick={() => playAudio(selectedShape.name)}
-              type="button"
-              className="bg-purple-100 p-3 rounded-full text-purple-600 hover:bg-purple-200 transition"
-              title="Putar Suara"
-            >
-              <Volume2 size={24} />
-            </button>
-          </div>
+      <motion.div 
+        key={selectedShape.name}
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        className="w-full bg-gradient-to-tr from-purple-100 to-indigo-50 rounded-3xl p-8 border-2 border-purple-200 flex flex-col items-center text-center my-2 shadow-inner"
+      >
+        <motion.div 
+          animate={{ rotate: [0, 10, -10, 0] }}
+          transition={{ duration: 3, repeat: Infinity }}
+          className="text-9xl mb-4 drop-shadow-md"
+        >
+          {selectedShape.icon}
+        </motion.div>
+        <h3 className="text-4xl font-black text-purple-700 mb-2">{selectedShape.name}</h3>
+        <p className="text-lg font-bold text-gray-600 max-w-md">{selectedShape.description}</p>
+      </motion.div>
 
-          <div className="text-8xl my-2 transform hover:scale-110 transition duration-300 inline-block">
-            {selectedShape.icon}
-          </div>
-
-          <h3 className="text-3xl font-black text-slate-800 tracking-wide">
-            {selectedShape.name}
-          </h3>
-
-          <p className="text-slate-500 font-bold text-base mt-1">
-            {"Contoh: "}
-            <span className="text-purple-600">
-              {selectedShape.exampleIcon} {selectedShape.exampleName}
-            </span>
-          </p>
-
-          <p className="text-slate-400 font-bold text-sm flex items-center justify-center gap-1 mt-3">
-            <Sparkles size={16} className="text-amber-400" />
-            <span>{"Kamu dapat +1 Bintang!"}</span>
-          </p>
-        </div>
-      )}
-
-      {/* Grid Tombol Bentuk */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {shapeData.map((item) => (
-          <button
-            key={item.id}
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 w-full mt-4">
+        {SHAPES_DATA.map((item: ShapeItem) => (
+          <motion.button
+            key={item.name}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.9 }}
             onClick={() => handleSelectShape(item)}
-            type="button"
-            className={`${item.bgColor} text-white p-5 rounded-3xl shadow-lg border-b-8 ${item.borderColor} flex flex-col items-center justify-between transition transform hover:-translate-y-1 active:scale-95 min-h-[130px]`}
+            className={`p-4 rounded-2xl flex flex-col items-center justify-center border-b-4 transition cursor-pointer ${
+              selectedShape.name === item.name
+                ? 'bg-purple-500 text-white border-purple-700 shadow-lg scale-105'
+                : 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100'
+            }`}
           >
-            <span className="text-5xl my-1">{item.icon}</span>
-            <span className="text-xs font-black bg-black/20 px-3 py-0.5 rounded-full mt-2">
-              {item.name}
-            </span>
-          </button>
+            <span className="text-5xl mb-1">{item.icon}</span>
+            <span className="font-extrabold text-base">{item.name}</span>
+          </motion.button>
         ))}
       </div>
     </div>
   );
-}
+};
