@@ -86,7 +86,7 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-gradient-to-b from-sky-300 via-sky-200 to-indigo-200 flex flex-col items-center justify-center p-4 overflow-hidden select-none">
+    <div className="relative min-h-screen w-full bg-gradient-to-b from-sky-300 via-sky-200 to-indigo-200 flex flex-col items-center justify-center p-3 sm:p-6 pt-16 sm:pt-6 overflow-x-hidden select-none box-border">
       {/* Visual Background Elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <motion.div 
@@ -107,10 +107,10 @@ export default function App() {
         <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-gradient-to-tr from-purple-400 to-sky-300 rounded-full opacity-40 blur-3xl pointer-events-none" />
       </div>
 
-      {/* Container Kanan Atas: Skor Bintang & Tombol Pengaturan Tepat di Bawahnya */}
-      <div className="fixed top-5 right-5 flex flex-col items-end gap-3 z-40">
+      {/* Container Kanan Atas: Skor Bintang & Tombol Pengaturan (Aman & Tidak Menutupi Teks) */}
+      <div className="absolute top-3 right-3 sm:top-5 sm:right-5 flex flex-col items-end gap-2 z-40">
         {timeRemaining !== null && (
-          <div className="bg-white/90 backdrop-blur-md text-slate-800 font-black px-4 py-2 rounded-full border-3 border-sky-300 shadow-md flex items-center gap-2 text-sm">
+          <div className="bg-white/90 backdrop-blur-md text-slate-800 font-black px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border-2 sm:border-3 border-sky-300 shadow-md flex items-center gap-1.5 text-xs sm:text-sm">
             <span>⏳</span>
             <span>{formatTime(timeRemaining)}</span>
           </div>
@@ -118,12 +118,12 @@ export default function App() {
 
         <motion.div 
           whileHover={{ scale: 1.08 }}
-          className="bg-gradient-to-r from-amber-400 to-yellow-300 text-amber-950 px-5 py-2 rounded-full shadow-[0_6px_20px_rgba(245,158,11,0.4)] border-4 border-white flex items-center gap-2.5 font-black text-xl sm:text-2xl cursor-default"
+          className="bg-gradient-to-r from-amber-400 to-yellow-300 text-amber-950 px-3.5 py-1.5 sm:px-5 sm:py-2 rounded-full shadow-[0_6px_20px_rgba(245,158,11,0.4)] border-3 sm:border-4 border-white flex items-center gap-2 font-black text-lg sm:text-2xl cursor-default"
         >
           <motion.span 
             animate={{ rotate: [0, 20, -20, 0], scale: [1, 1.2, 1] }} 
             transition={{ duration: 2, repeat: Infinity }}
-            className="text-2xl sm:text-3xl filter drop-shadow-md"
+            className="text-xl sm:text-3xl filter drop-shadow-md"
           >
             ⭐
           </motion.span>
@@ -135,7 +135,7 @@ export default function App() {
           whileHover={{ scale: 1.15, rotate: 90 }}
           whileTap={{ scale: 0.85 }}
           onClick={handleOpenGate}
-          className="w-11 h-11 bg-white/90 backdrop-blur-md hover:bg-white text-slate-700 rounded-full border-4 border-sky-300 shadow-[0_6px_15px_rgba(0,0,0,0.15)] flex items-center justify-center text-xl cursor-pointer transition-colors"
+          className="w-9 h-9 sm:w-11 sm:h-11 bg-white/90 backdrop-blur-md hover:bg-white text-slate-700 rounded-full border-3 sm:border-4 border-sky-300 shadow-[0_6px_15px_rgba(0,0,0,0.15)] flex items-center justify-center text-base sm:text-xl cursor-pointer transition-colors"
           title="Pengaturan Orang Tua"
         >
           ⚙️
