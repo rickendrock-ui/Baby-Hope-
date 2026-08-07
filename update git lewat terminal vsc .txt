@@ -1,0 +1,7 @@
+update git langsung:
+git add . ; git commit -m "update cepat" ; git push  enter
+
+update git 1 1:
+git add .  enter
+git commit -m "update cepat"   enter
+git push  enter
