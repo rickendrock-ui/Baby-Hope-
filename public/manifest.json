@@ -1,0 +1,21 @@
+{
+  "short_name": "BabyHope",
+  "name": "Baby Hope - Belajar & Bermain",
+  "icons": [
+    {
+      "src": "https://fav.farm/🌈",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://fav.farm/🌈",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "background_color": "#e0f2fe",
+  "theme_color": "#0284c7",
+  "display": "standalone",
+  "orientation": "portrait"
+}
