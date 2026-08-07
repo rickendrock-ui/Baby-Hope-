@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// --- TIPE DATA ---
-interface ModuleItem {
+// --- DATA MODUL ---
+interface GameModule {
   id: string;
   title: string;
   subtitle: string;
@@ -12,25 +12,24 @@ interface ModuleItem {
   voiceText: string;
 }
 
-// --- DATA MODUL UTAMA ---
-const modulesData: ModuleItem[] = [
-  { id: 'quiz', title: 'Kuis Pintar', subtitle: 'Main Tebak-Tebakan', icon: '🎮', badge: 'Game 🏆', color: 'from-indigo-500 to-purple-600', voiceText: 'Ayo main kuis pintar!' },
-  { id: 'alphabet', title: 'Huruf A-Z', subtitle: 'Mengenal Abjad', icon: '🔤', badge: 'Dasar 🖍️', color: 'from-pink-400 to-rose-500', voiceText: 'Kita belajar huruf A B C yuk!' },
-  { id: 'numbers', title: 'Angka 1-10', subtitle: 'Belajar Hitung', icon: '🔢', badge: 'Berhitung 🧮', color: 'from-blue-400 to-blue-600', voiceText: 'Satu, dua, tiga! Mari berhitung!' },
-  { id: 'colors', title: 'Warna-Warni', subtitle: 'Merah, Biru ...', icon: '🌈', badge: 'Kreatif 🎨', color: 'from-yellow-400 to-amber-500', voiceText: 'Lihat warna-warni indah sekali!' },
-  { id: 'animals', title: 'Dunia Hewan', subtitle: 'Suara & Nama', icon: '🦁', badge: 'Seru! 🔊', color: 'from-green-400 to-emerald-600', voiceText: 'Lucunya hewan-hewan ini!' },
-  { id: 'shapes', title: 'Bentuk Geometri', subtitle: 'Lingkaran, Bintang', icon: '🔷', badge: 'Pintar 🧠', color: 'from-purple-400 to-indigo-500', voiceText: 'Belajar bentuk bersama-sama!' },
-  { id: 'fruits', title: 'Buah & Sayur', subtitle: 'Apel, Pisang ...', icon: '🍎', badge: 'Sehat 🍌', color: 'from-orange-400 to-red-500', voiceText: 'Buah dan sayur bikin badan sehat!' },
+const modulesData: GameModule[] = [
+  { id: 'quiz', title: 'Kuis Pintar', subtitle: 'Main Tebak-Tebakan & Dapat Bintang!', icon: '🎮', badge: 'Game 🏆', color: 'from-indigo-500 to-purple-600', voiceText: 'Ayo main kuis pintar dan dapatkan bintang!' },
+  { id: 'alphabet', title: 'Huruf A-Z', subtitle: 'Mengenal Abjad & Kata', icon: '🔤', badge: 'Dasar 🖍️', color: 'from-pink-400 to-rose-500', voiceText: 'Kita belajar huruf A sampai Z yuk!' },
+  { id: 'numbers', title: 'Angka 1-10', subtitle: 'Hitung Balon & Bintang', icon: '🔢', badge: 'Berhitung 🧮', color: 'from-blue-400 to-blue-600', voiceText: 'Satu, dua, tiga! Mari berhitung!' },
+  { id: 'colors', title: 'Warna-Warni', subtitle: 'Mengenal Warna & Objek', icon: '🌈', badge: 'Kreatif 🎨', color: 'from-yellow-400 to-amber-500', voiceText: 'Lihat warna-warni indah sekali!' },
+  { id: 'animals', title: 'Dunia Hewan', subtitle: 'Suara & Nama Hewan', icon: '🦁', badge: 'Seru! 🔊', color: 'from-green-400 to-emerald-600', voiceText: 'Lucunya hewan-hewan ini!' },
+  { id: 'shapes', title: 'Bentuk Geometri', subtitle: 'Lingkaran, Bintang, Persegi', icon: '🔷', badge: 'Pintar 🧠', color: 'from-purple-400 to-indigo-500', voiceText: 'Belajar bentuk bersama-sama!' },
+  { id: 'fruits', title: 'Buah & Sayur', subtitle: 'Apel, Pisang & Sayuran Sehat', icon: '🍎', badge: 'Sehat 🍌', color: 'from-orange-400 to-red-500', voiceText: 'Buah dan sayur bikin badan sehat!' },
 ];
 
-// --- FUNGSI SUARA ANAK (PITCH TINGGI) ---
+// --- FUNGSI SUARA ANAK PEREMPUAN ---
 const speakAsChild = (text: string) => {
   if (!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
 
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'id-ID';
-  utterance.pitch = 1.6; // Suara anak perempuan umur 4 tahun
+  utterance.pitch = 1.6; // Suara anak perempuan riang 4 tahun
   utterance.rate = 0.95;
   utterance.volume = 1.0;
 
@@ -41,18 +40,18 @@ const speakAsChild = (text: string) => {
   window.speechSynthesis.speak(utterance);
 };
 
-// --- BACKGROUND INTERAKTIF ---
+// --- BACKGROUND INTERAKTIF ANIME/AWAN ---
 const InteractiveBackground: React.FC = () => (
   <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
     <div className="absolute inset-0 bg-gradient-to-b from-sky-300 via-pink-200 to-amber-100 opacity-80" />
-    <motion.div className="absolute top-10 left-10 text-6xl opacity-40" animate={{ y: [0, -20, 0], x: [0, 15, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}>☁️</motion.div>
-    <motion.div className="absolute top-28 right-16 text-7xl opacity-40" animate={{ y: [0, 25, 0], x: [0, -20, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}>☁️</motion.div>
-    <motion.div className="absolute bottom-20 left-1/4 text-5xl opacity-30" animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>⭐</motion.div>
-    <motion.div className="absolute top-1/3 right-1/4 text-6xl opacity-30" animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}>🌟</motion.div>
+    <motion.div className="absolute top-8 left-8 text-7xl opacity-40" animate={{ y: [0, -20, 0], x: [0, 15, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}>☁️</motion.div>
+    <motion.div className="absolute top-24 right-12 text-8xl opacity-40" animate={{ y: [0, 25, 0], x: [0, -20, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}>☁️</motion.div>
+    <motion.div className="absolute bottom-16 left-1/4 text-6xl opacity-30" animate={{ scale: [1, 1.25, 1], rotate: [0, 15, -15, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>⭐</motion.div>
+    <motion.div className="absolute top-1/3 right-1/4 text-7xl opacity-30" animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}>🌟</motion.div>
   </div>
 );
 
-// --- MODAL PARENTAL GATE (TAMENG / PENGATURAN) ---
+// --- MODAL PARENTAL GATE ---
 const ParentModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
   const [num1] = useState(Math.floor(Math.random() * 5) + 3);
   const [num2] = useState(Math.floor(Math.random() * 4) + 1);
@@ -74,12 +73,12 @@ const ParentModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border-4 border-amber-400">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-2">🛡️ Area Orang Tua</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl font-bold">✖</button>
+          <h3 className="text-2xl font-extrabold text-gray-800 flex items-center gap-2">🛡️ Area Orang Tua</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-2xl font-bold">✖</button>
         </div>
         {!isUnlocked ? (
           <div className="flex flex-col items-center">
-            <p className="text-gray-600 text-center mb-4 font-medium">Jawab pertanyaan ini untuk membuka pengaturan:</p>
+            <p className="text-gray-600 text-center mb-4 font-semibold">Bantu jawab soal ini untuk membuka pengaturan:</p>
             <div className="text-3xl font-extrabold text-amber-600 bg-amber-50 px-6 py-3 rounded-2xl mb-4 border-2 border-amber-200">
               {num1} + {num2} = ?
             </div>
@@ -88,9 +87,9 @@ const ParentModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
               value={ans} 
               onChange={(e) => setAns(e.target.value)} 
               placeholder="Jawaban..." 
-              className="w-full text-center text-xl p-3 border-2 border-gray-300 rounded-xl mb-4 focus:border-amber-500 outline-none" 
+              className="w-full text-center text-xl p-3 border-2 border-gray-300 rounded-xl mb-4 focus:border-amber-500 outline-none font-bold" 
             />
-            <button onClick={handleVerify} className="w-full bg-amber-500 text-white font-bold py-3 rounded-xl shadow-md hover:bg-amber-600 transition">
+            <button onClick={handleVerify} className="w-full bg-amber-500 text-white font-extrabold py-3 rounded-xl shadow-md hover:bg-amber-600 transition">
               Buka Pengaturan 🔓
             </button>
           </div>
@@ -99,7 +98,7 @@ const ParentModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
             <div className="p-3 bg-green-100 text-green-800 rounded-xl text-center font-bold">✅ Pengaturan Terbuka</div>
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-1">Batasan Waktu Bermain</label>
-              <select className="w-full p-2 border rounded-xl font-medium">
+              <select className="w-full p-2 border rounded-xl font-bold">
                 <option>Tanpa Batas</option>
                 <option>15 Menit</option>
                 <option>30 Menit</option>
@@ -113,123 +112,207 @@ const ParentModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
   );
 };
 
-// --- KOMPONEN MODUL INTERAKTIF SPESIFIK ---
-const ModuleViewer: React.FC<{ moduleId: string; onBack: () => void }> = ({ moduleId, onBack }) => {
+// --- MODUL INTERAKTIF UTAMA (VIEWER) ---
+interface ModuleViewerProps {
+  moduleId: string;
+  onBack: () => void;
+  onAddStar: () => void;
+}
+
+const ModuleViewer: React.FC<ModuleViewerProps> = ({ moduleId, onBack, onAddStar }) => {
   const currentModule = modulesData.find((m) => m.id === moduleId);
 
-  // Render Konten Khusus Berdasarkan Modul Yang Dipilih
-  const renderModuleContent = () => {
+  // STATE KUIS PINTAR
+  const [quizScore, setQuizScore] = useState(0);
+  const [quizStep, setQuizStep] = useState(0);
+  const quizQuestions = [
+    { question: 'Hewan mana yang bersuara "Meong Meong"?', options: [{ text: 'Anjing 🐶', correct: false }, { text: 'Kucing 🐱', correct: true }, { text: 'Sapi 🐮', correct: false }] },
+    { question: 'Warna apakah buah Apel ini? 🍎', options: [{ text: 'Merah 🔴', correct: true }, { text: 'Biru 🔵', correct: false }, { text: 'Kuning 🟡', correct: false }] },
+    { question: 'Manakah bentuk Bintang? ⭐', options: [{ text: 'Lingkaran ⚪', correct: false }, { text: 'Segitiga 🔺', correct: false }, { text: 'Bintang ⭐', correct: true }] }
+  ];
+
+  const handleQuizAnswer = (isCorrect: boolean) => {
+    if (isCorrect) {
+      speakAsChild("Horeee! Jawaban kamu benar sekali! Kamu hebat!");
+      setQuizScore((prev) => prev + 1);
+      onAddStar(); // Reward Bintang
+    } else {
+      speakAsChild("Oops, hampir benar! Coba lagi ya!");
+    }
+
+    if (quizStep < quizQuestions.length - 1) {
+      setTimeout(() => setQuizStep((prev) => prev + 1), 1000);
+    } else {
+      setTimeout(() => {
+        speakAsChild("Selamat! Kamu berhasil menyelesaikan Kuis Pintar!");
+      }, 1200);
+    }
+  };
+
+  // RENDER INTERAKTIF SETIAP MODUL
+  const renderInteractiveContent = () => {
     switch (moduleId) {
       case 'alphabet':
-        const alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+        const alphabetData = [
+          { char: 'A', word: 'Apel', icon: '🍎' },
+          { char: 'B', word: 'Bebek', icon: '🦆' },
+          { char: 'C', word: 'Cokelat', icon: '🍫' },
+          { char: 'D', word: 'Domba', icon: '🐑' },
+          { char: 'E', word: 'Elang', icon: '🦅' },
+          { char: 'F', word: 'Foto', icon: '📷' },
+          { char: 'G', word: 'Gajah', icon: '🐘' },
+          { char: 'H', word: 'Harimau', icon: '🐯' },
+          { char: 'I', word: 'Ikan', icon: '🐟' },
+          { char: 'J', word: 'Jeruk', icon: '🍊' },
+          { char: 'K', word: 'Kucing', icon: '🐱' },
+          { char: 'L', word: 'Lilin', icon: '🕯️' },
+        ];
         return (
-          <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 w-full">
-            {alphabet.map((char) => (
-              <motion.button
-                key={char}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => speakAsChild(`Huruf ${char}`)}
-                className="bg-pink-400 hover:bg-pink-500 text-white font-extrabold text-2xl py-4 rounded-2xl shadow-md border-b-4 border-pink-600"
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 w-full">
+            {alphabetData.map((item) => (
+              <motion.div
+                key={item.char}
+                whileHover={{ scale: 1.08, rotate: 2 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => speakAsChild(`${item.char} untuk ${item.word}`)}
+                className="bg-gradient-to-tr from-pink-400 to-rose-400 text-white p-4 rounded-3xl shadow-lg border-b-4 border-pink-700 flex flex-col items-center justify-center cursor-pointer"
               >
-                {char}
-              </motion.button>
+                <span className="text-4xl font-extrabold bg-white/20 px-4 py-1 rounded-2xl mb-2">{item.char}</span>
+                <span className="text-5xl mb-1">{item.icon}</span>
+                <span className="font-bold text-lg">{item.word}</span>
+              </motion.div>
             ))}
           </div>
         );
 
       case 'numbers':
-        const numbers = [
-          { num: '1', text: 'Satu', icon: '🎈' },
-          { num: '2', text: 'Dua', icon: '🎈🎈' },
-          { num: '3', text: 'Tiga', icon: '🎈🎈🎈' },
-          { num: '4', text: 'Empat', icon: '🎈🎈🎈🎈' },
-          { num: '5', text: 'Lima', icon: '🎈🎈🎈🎈🎈' },
-          { num: '6', text: 'Enam', icon: '🌟🌟🌟🌟🌟🌟' },
-          { num: '7', text: 'Tujuh', icon: '🍎🍎🍎🍎🍎🍎🍎' },
-          { num: '8', text: 'Delapan', icon: '🐱🐱🐱🐱🐱🐱🐱🐱' },
-          { num: '9', text: 'Sembilan', icon: '⚽⚽⚽⚽⚽⚽⚽⚽⚽' },
-          { num: '10', text: 'Sepuluh', icon: '🎁🎁🎁🎁🎁🎁🎁🎁🎁🎁' },
+        const numbersData = [
+          { num: 1, word: 'Satu', icon: '🎈' },
+          { num: 2, word: 'Dua', icon: '🎈🎈' },
+          { num: 3, word: 'Tiga', icon: '🎈🎈🎈' },
+          { num: 4, word: 'Empat', icon: '🎈🎈🎈🎈' },
+          { num: 5, word: 'Lima', icon: '🎈🎈🎈🎈🎈' },
+          { num: 6, word: 'Enam', icon: '🌟🌟🌟🌟🌟🌟' },
         ];
         return (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-            {numbers.map((item) => (
+            {numbersData.map((item) => (
               <motion.div
                 key={item.num}
                 whileHover={{ scale: 1.03 }}
-                onClick={() => speakAsChild(`${item.num}. ${item.text}`)}
-                className="bg-blue-400 text-white p-4 rounded-2xl shadow-md flex items-center justify-between cursor-pointer border-b-4 border-blue-600"
+                whileTap={{ scale: 0.97 }}
+                onClick={() => speakAsChild(`${item.num}. ${item.word}`)}
+                className="bg-gradient-to-r from-blue-400 to-indigo-500 text-white p-5 rounded-3xl shadow-lg border-b-4 border-blue-700 flex items-center justify-between cursor-pointer"
               >
                 <div className="flex items-center gap-4">
-                  <span className="text-4xl font-extrabold bg-white/20 px-3 py-1 rounded-xl">{item.num}</span>
-                  <span className="text-xl font-bold">{item.text}</span>
+                  <span className="text-5xl font-black bg-white/20 px-4 py-2 rounded-2xl">{item.num}</span>
+                  <span className="text-2xl font-extrabold">{item.word}</span>
                 </div>
-                <span className="text-lg">{item.icon}</span>
+                <span className="text-2xl">{item.icon}</span>
               </motion.div>
             ))}
           </div>
         );
 
       case 'colors':
-        const colors = [
-          { name: 'Merah', bg: 'bg-red-500' },
-          { name: 'Biru', bg: 'bg-blue-500' },
-          { name: 'Kuning', bg: 'bg-yellow-400' },
-          { name: 'Hijau', bg: 'bg-green-500' },
-          { name: 'Ungu', bg: 'bg-purple-500' },
-          { name: 'Jingga', bg: 'bg-orange-500' },
+        const colorsData = [
+          { name: 'Merah', bg: 'bg-red-500', icon: '🍎' },
+          { name: 'Biru', bg: 'bg-blue-500', icon: '🌊' },
+          { name: 'Kuning', bg: 'bg-yellow-400', icon: '🌻' },
+          { name: 'Hijau', bg: 'bg-green-500', icon: '🍃' },
+          { name: 'Ungu', bg: 'bg-purple-500', icon: '🍇' },
+          { name: 'Jingga', bg: 'bg-orange-500', icon: '🍊' },
         ];
         return (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 w-full">
-            {colors.map((col) => (
+            {colorsData.map((col) => (
               <motion.div
                 key={col.name}
                 whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => speakAsChild(`Warna ${col.name}`)}
-                className={`${col.bg} text-white h-28 rounded-2xl shadow-md flex items-center justify-center font-extrabold text-2xl cursor-pointer border-b-4 border-black/20`}
+                className={`${col.bg} text-white p-6 rounded-3xl shadow-xl flex flex-col items-center justify-center cursor-pointer border-b-4 border-black/20`}
               >
-                {col.name}
+                <span className="text-5xl mb-2">{col.icon}</span>
+                <span className="text-2xl font-black">{col.name}</span>
               </motion.div>
             ))}
           </div>
         );
 
       case 'animals':
-        const animals = [
-          { name: 'Kucing', sound: 'Meong meong', icon: '🐱' },
-          { name: 'Anjing', sound: 'Guk guk', icon: '🐶' },
+        const animalsData = [
+          { name: 'Kucing', sound: 'Meong Meong', icon: '🐱' },
+          { name: 'Anjing', sound: 'Guk Guk', icon: '🐶' },
           { name: 'Sapi', sound: 'Muuu', icon: '🐮' },
           { name: 'Singa', sound: 'Rooaar', icon: '🦁' },
           { name: 'Ayam', sound: 'Kukuruyuk', icon: '🐔' },
-          { name: 'Bebek', sound: 'Kwek kwek', icon: '🦆' },
+          { name: 'Bebek', sound: 'Kwek Kwek', icon: '🦆' },
         ];
         return (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 w-full">
-            {animals.map((ani) => (
+            {animalsData.map((ani) => (
               <motion.div
                 key={ani.name}
-                whileHover={{ scale: 1.05 }}
-                onClick={() => speakAsChild(`${ani.name}. Suaranya ${ani.sound}`)}
-                className="bg-emerald-500 text-white p-4 rounded-2xl shadow-md flex flex-col items-center cursor-pointer border-b-4 border-emerald-700"
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.92 }}
+                onClick={() => speakAsChild(`${ani.name}! Suaranya ${ani.sound}`)}
+                className="bg-gradient-to-tr from-emerald-400 to-teal-500 text-white p-5 rounded-3xl shadow-xl flex flex-col items-center justify-center cursor-pointer border-b-4 border-teal-700"
               >
-                <span className="text-5xl mb-2">{ani.icon}</span>
-                <span className="font-bold text-xl">{ani.name}</span>
+                <span className="text-6xl mb-2">{ani.icon}</span>
+                <span className="font-extrabold text-2xl">{ani.name}</span>
+                <span className="text-xs bg-white/30 px-3 py-1 rounded-full mt-2 font-bold">{ani.sound}</span>
               </motion.div>
             ))}
           </div>
         );
 
       case 'quiz':
-      default:
+        const q = quizQuestions[quizStep];
         return (
-          <div className="text-center p-6 bg-amber-50 rounded-2xl border-2 border-amber-200 w-full">
-            <p className="text-2xl font-bold text-amber-800 mb-4">Siap Bermain Tebak-Tebakan?</p>
-            <button 
-              onClick={() => speakAsChild("Siap! Mari kita mulai kuisnya!")}
-              className="bg-amber-500 text-white font-extrabold px-6 py-3 rounded-full shadow-lg hover:bg-amber-600 text-xl"
-            >
-              Mulai Kuis 🚀
-            </button>
+          <div className="w-full flex flex-col items-center bg-amber-50/90 p-6 rounded-3xl border-4 border-amber-300 shadow-xl">
+            <div className="flex justify-between w-full mb-4 items-center">
+              <span className="text-lg font-black text-amber-800">Pertanyaan {quizStep + 1} / {quizQuestions.length}</span>
+              <span className="bg-yellow-300 text-yellow-900 px-4 py-1 rounded-full font-extrabold">⭐ Skor: {quizScore}</span>
+            </div>
+
+            <h3 className="text-2xl font-extrabold text-gray-800 text-center mb-6">{q.question}</h3>
+
+            <div className="grid grid-cols-1 gap-4 w-full max-w-md">
+              {q.options.map((opt, idx) => (
+                <motion.button
+                  key={idx}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleQuizAnswer(opt.correct)}
+                  className="bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xl font-extrabold py-4 px-6 rounded-2xl shadow-lg border-b-4 border-orange-600 hover:from-amber-500 hover:to-orange-500 transition"
+                >
+                  {opt.text}
+                </motion.button>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'shapes':
+      case 'fruits':
+      default:
+        const defaultItems = moduleId === 'shapes' 
+          ? [{ name: 'Lingkaran', icon: '⚪' }, { name: 'Persegi', icon: '🟦' }, { name: 'Segitiga', icon: '🔺' }, { name: 'Bintang', icon: '⭐' }]
+          : [{ name: 'Apel', icon: '🍎' }, { name: 'Pisang', icon: '🍌' }, { name: 'Jeruk', icon: '🍊' }, { name: 'Wortel', icon: '🥕' }];
+        return (
+          <div className="grid grid-cols-2 gap-4 w-full">
+            {defaultItems.map((it) => (
+              <motion.div
+                key={it.name}
+                whileHover={{ scale: 1.05 }}
+                onClick={() => speakAsChild(it.name)}
+                className="bg-purple-500 text-white p-6 rounded-3xl shadow-lg flex flex-col items-center justify-center cursor-pointer border-b-4 border-purple-700"
+              >
+                <span className="text-6xl mb-2">{it.icon}</span>
+                <span className="text-2xl font-bold">{it.name}</span>
+              </motion.div>
+            ))}
           </div>
         );
     }
@@ -239,25 +322,25 @@ const ModuleViewer: React.FC<{ moduleId: string; onBack: () => void }> = ({ modu
     <motion.div 
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="relative z-10 w-full max-w-3xl bg-white/90 backdrop-blur-md rounded-3xl p-6 shadow-2xl border-4 border-white flex flex-col items-center"
+      className="relative z-10 w-full max-w-3xl bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-2xl border-4 border-white flex flex-col items-center"
     >
       <div className="w-full flex justify-between items-center mb-6">
         <button 
           onClick={onBack}
-          className="bg-pink-500 text-white font-extrabold px-5 py-2 rounded-full shadow-md hover:bg-pink-600 transition flex items-center gap-2"
+          className="bg-pink-500 text-white font-extrabold px-5 py-2.5 rounded-full shadow-md hover:bg-pink-600 transition flex items-center gap-2 text-lg"
         >
-          ⬅️ Kembali
+          ⬅️ Menu Utama
         </button>
-        <span className="bg-amber-100 text-amber-800 font-bold px-4 py-1 rounded-full text-sm">
+        <span className="bg-amber-100 text-amber-800 font-extrabold px-4 py-1.5 rounded-full text-sm">
           {currentModule?.badge}
         </span>
       </div>
 
-      <div className="text-6xl mb-2">{currentModule?.icon}</div>
-      <h2 className="text-3xl font-extrabold text-gray-800 mb-1">{currentModule?.title}</h2>
-      <p className="text-gray-600 font-medium mb-6">{currentModule?.subtitle}</p>
+      <div className="text-7xl mb-2">{currentModule?.icon}</div>
+      <h2 className="text-3xl font-black text-gray-800 mb-1">{currentModule?.title}</h2>
+      <p className="text-gray-600 font-bold mb-6">{currentModule?.subtitle}</p>
 
-      {renderModuleContent()}
+      {renderInteractiveContent()}
     </motion.div>
   );
 };
@@ -265,34 +348,43 @@ const ModuleViewer: React.FC<{ moduleId: string; onBack: () => void }> = ({ modu
 // --- DASHBOARD UTAMA ---
 const DashboardContent: React.FC = () => {
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
+  const [starsCount, setStarsCount] = useState(26);
   const [isParentModalOpen, setIsParentModalOpen] = useState(false);
 
-  const handleSelectModule = (mod: ModuleItem) => {
+  const handleSelectModule = (mod: GameModule) => {
     speakAsChild(mod.voiceText);
     setActiveModuleId(mod.id);
   };
 
+  const handleAddStar = () => {
+    setStarsCount((prev) => prev + 1);
+  };
+
   return (
     <div className="relative z-10 min-h-screen w-full flex flex-col items-center pb-12">
-      {/* Top Navigation */}
+      {/* Top Header Bar */}
       <div className="w-full max-w-4xl bg-white/90 backdrop-blur-md rounded-b-3xl shadow-md p-4 flex justify-between items-center px-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gradient-to-tr from-pink-400 to-blue-400 rounded-full flex items-center justify-center text-white text-xl shadow-md">
             🌈
           </div>
           <div>
-            <h1 className="text-xl font-extrabold text-blue-500 leading-tight">BABY HOPE</h1>
-            <p className="text-xs text-gray-500 font-semibold">Belajar • Bermain • Tumbuh</p>
+            <h1 className="text-xl font-black text-blue-500 leading-tight">BABY HOPE</h1>
+            <p className="text-xs text-gray-500 font-bold">Belajar • Bermain • Tumbuh</p>
           </div>
         </div>
         
         <div className="flex items-center gap-3">
-          <div className="bg-yellow-100 border-2 border-yellow-400 text-yellow-700 px-4 py-1.5 rounded-full font-bold flex items-center gap-2 shadow-sm">
-            ⭐ 26 Bintang
-          </div>
+          <motion.div 
+            key={starsCount}
+            animate={{ scale: [1, 1.2, 1] }}
+            className="bg-yellow-100 border-2 border-yellow-400 text-yellow-700 px-4 py-1.5 rounded-full font-black flex items-center gap-2 shadow-sm"
+          >
+            ⭐ {starsCount} Bintang
+          </motion.div>
           <button 
             onClick={() => setIsParentModalOpen(true)}
-            className="bg-amber-400 hover:bg-amber-500 text-white p-2.5 rounded-full shadow-md text-lg transition"
+            className="bg-amber-400 hover:bg-amber-500 text-white p-2.5 rounded-full shadow-md text-xl transition"
             title="Pengaturan Orang Tua"
           >
             🛡️
@@ -303,7 +395,11 @@ const DashboardContent: React.FC = () => {
       {/* Main View Area */}
       {activeModuleId ? (
         <div className="mt-8 px-4 w-full flex justify-center">
-          <ModuleViewer moduleId={activeModuleId} onBack={() => setActiveModuleId(null)} />
+          <ModuleViewer 
+            moduleId={activeModuleId} 
+            onBack={() => setActiveModuleId(null)} 
+            onAddStar={handleAddStar}
+          />
         </div>
       ) : (
         <>
@@ -319,11 +415,11 @@ const DashboardContent: React.FC = () => {
               <span className="absolute bottom-0 right-0 bg-pink-500 text-white text-xs p-1.5 rounded-full border-2 border-white shadow">🔊</span>
             </motion.div>
             
-            <h2 className="mt-4 text-3xl font-extrabold text-gray-800">👋 Halo, Hope!</h2>
-            <p className="text-gray-700 font-bold text-lg mt-1">Yuk pilih permainan seru hari ini! 👇</p>
+            <h2 className="mt-4 text-3xl font-black text-gray-800">👋 Halo, Hope!</h2>
+            <p className="text-gray-700 font-extrabold text-lg mt-1">Yuk pilih permainan seru hari ini! 👇</p>
           </div>
 
-          {/* Grid Modul */}
+          {/* Grid Modul Pembelajaran */}
           <div className="mt-8 w-full max-w-4xl px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {modulesData.map((mod) => (
               <motion.div
@@ -337,8 +433,8 @@ const DashboardContent: React.FC = () => {
                   {mod.badge}
                 </div>
                 <div className="text-6xl mb-4 drop-shadow-md">{mod.icon}</div>
-                <h3 className="text-2xl font-extrabold text-center drop-shadow-sm">{mod.title}</h3>
-                <p className="text-white/90 text-sm font-medium text-center mt-1">{mod.subtitle}</p>
+                <h3 className="text-2xl font-black text-center drop-shadow-sm">{mod.title}</h3>
+                <p className="text-white/90 text-sm font-bold text-center mt-1">{mod.subtitle}</p>
               </motion.div>
             ))}
           </div>
@@ -381,14 +477,14 @@ const App: React.FC = () => {
             <motion.div className="text-8xl mb-4" animate={{ rotate: [0, -10, 10, -10, 0] }} transition={{ repeat: Infinity, duration: 3 }}>
               🌈
             </motion.div>
-            <h1 className="text-4xl font-extrabold text-blue-600 mb-2">Baby Hope</h1>
-            <p className="text-lg text-gray-600 mb-8 font-semibold">Belajar • Bermain • Tumbuh</p>
+            <h1 className="text-4xl font-black text-blue-600 mb-2">Baby Hope</h1>
+            <p className="text-lg text-gray-600 mb-8 font-extrabold">Belajar • Bermain • Tumbuh</p>
 
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={handleStart}
-              className="bg-gradient-to-r from-pink-500 to-orange-400 text-white text-2xl font-bold py-4 px-10 rounded-full shadow-lg border-b-4 border-pink-700 hover:border-pink-500 transition-all cursor-pointer"
+              className="bg-gradient-to-r from-pink-500 to-orange-400 text-white text-2xl font-black py-4 px-10 rounded-full shadow-lg border-b-4 border-pink-700 hover:border-pink-500 transition-all cursor-pointer"
             >
               Ayo Main! 🚀
             </motion.button>
