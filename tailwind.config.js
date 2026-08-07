@@ -7,7 +7,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Quicksand', 'sans-serif'],
+        // Tambahkan font ramah anak di sini
+        'comic-sans': ['"Comic Neue"', 'cursive', 'sans-serif'], 
       },
     },
   },
