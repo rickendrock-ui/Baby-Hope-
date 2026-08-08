@@ -1,200 +1,132 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React from 'react';
+import { Calendar, HeartPulse, ShieldCheck, ChevronRight, Baby, BookOpen, Utensils } from 'lucide-react';
 
 interface DashboardProps {
   onSelectModule: (moduleName: string) => void;
+  growthStatus?: string;
+  campakStatus?: boolean;
+  latestAgeMonths?: number;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ onSelectModule }) => {
-  const [chickSaying, setChickSaying] = useState(false);
-  const [balloonBouncing, setBalloonBouncing] = useState(false);
-
-  const modules = [
-    { id: 'alphabet', name: 'Abjad A-Z', icon: '🔤', bgGradient: 'from-rose-400 to-red-500', borderColor: 'border-red-600', shadowColor: 'shadow-red-300' },
-    { id: 'numbers', name: 'Angka & Berhitung', icon: '🔢', bgGradient: 'from-sky-400 to-blue-600', borderColor: 'border-blue-700', shadowColor: 'shadow-blue-300' },
-    { id: 'colors', name: 'Warna-Warni', icon: '🎨', bgGradient: 'from-amber-400 to-yellow-500', borderColor: 'border-amber-600', shadowColor: 'shadow-amber-300' },
-    { id: 'shapes', name: 'Bentuk Geometri', icon: '🔷', bgGradient: 'from-purple-400 to-indigo-600', borderColor: 'border-indigo-700', shadowColor: 'shadow-purple-300' },
-    { id: 'animals', name: 'Dunia Hewan', icon: '🐶', bgGradient: 'from-emerald-400 to-teal-600', borderColor: 'border-teal-700', shadowColor: 'shadow-teal-300' },
-    { id: 'fruits', name: 'Buah & Sayur', icon: '🍎', bgGradient: 'from-orange-400 to-amber-600', borderColor: 'border-orange-700', shadowColor: 'shadow-orange-300' },
-    { id: 'music', name: 'Mini Musik', icon: '🎹', bgGradient: 'from-pink-400 to-rose-500', borderColor: 'border-rose-600', shadowColor: 'shadow-pink-300' },
-    { id: 'quiz', name: 'Tebak-Tebakan', icon: '🧩', bgGradient: 'from-violet-400 to-purple-600', borderColor: 'border-purple-700', shadowColor: 'shadow-purple-300' },
-    { id: 'matching', name: 'Pencocokan', icon: '🎯', bgGradient: 'from-cyan-400 to-blue-500', borderColor: 'border-blue-600', shadowColor: 'shadow-blue-300' },
-  ];
-
-  const handleChickClick = () => {
-    setChickSaying(true);
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance('Cip cip! Aku anak ayam lucu!');
-      utterance.lang = 'id-ID';
-      utterance.pitch = 1.6;
-      utterance.rate = 1.1;
-      window.speechSynthesis.speak(utterance);
-    }
-    setTimeout(() => setChickSaying(false), 2000);
-  };
-
-  const handleBalloonClick = () => {
-    setBalloonBouncing(true);
-    setTimeout(() => setBalloonBouncing(false), 1000);
-  };
-
-  const line1 = "BABY HOPE";
-  const line2 = "PLAYGROUND";
-
+export default function Dashboard({
+  onSelectModule,
+  growthStatus = 'Ideal (Standar WHO)',
+  campakStatus = true,
+  latestAgeMonths = 24
+}: DashboardProps) {
   return (
-    <motion.div 
-      initial={{ scale: 0.85, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 0.4, type: 'spring', stiffness: 120 }}
-      className="w-full max-w-4xl bg-white/85 backdrop-blur-xl rounded-[2rem] sm:rounded-[3rem] p-4 sm:p-8 shadow-[0_25px_60px_rgba(0,0,0,0.18)] border-4 sm:border-8 border-white text-center relative overflow-hidden my-auto"
-    >
-      {/* ----------------- HEADER AREA ----------------- */}
-      <div className="mb-6 sm:mb-8 pt-2 relative flex items-center justify-between px-1 sm:px-6">
+    <div className="space-y-6">
+      {/* Banner Sapaan */}
+      <div className="bg-gradient-to-r from-[#00A884] to-teal-600 rounded-3xl p-6 md:p-8 text-white shadow-lg">
+        <h1 className="text-2xl md:text-3xl font-black">Selamat Datang di Baby Hope! 👋</h1>
+        <p className="text-xs md:text-sm text-emerald-100 mt-2 font-medium">
+          Pantau tumbuh kembang, jadwal imunisasi, dan nutrisi si kecil secara terpadu di satu tempat.
+        </p>
+      </div>
+
+      {/* ===================================================
+          3 KARTU INTERAKTIF (LANGSUNG BISA DIKLIK)
+         =================================================== */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         
-        {/* 🐣 Karakter Anak Ayam Interaktif (Kiri) */}
-        <div className="relative flex flex-col items-center shrink-0">
-          {chickSaying && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10, scale: 0.5 }}
-              animate={{ opacity: 1, y: -40, scale: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-300 text-amber-950 text-[10px] sm:text-sm font-black px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap border-2 border-white z-20 pointer-events-none"
-            >
-              Cip... Cip! 🐣
-            </motion.div>
-          )}
-
-          <motion.button
-            whileHover={{ scale: 1.25, rotate: [0, -10, 10, 0] }}
-            whileTap={{ scale: 0.85 }}
-            animate={{
-              y: [0, -6, 0],
-              rotate: [0, -3, 3, 0]
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            onClick={handleChickClick}
-            className="text-4xl sm:text-7xl cursor-pointer filter drop-shadow-lg select-none focus:outline-none"
-            title="Klik aku!"
-          >
-            🐥
-          </motion.button>
+        {/* KARTU 1: Usia Anak */}
+        <div
+          onClick={() => onSelectModule('balita')}
+          className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-300 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer flex items-center gap-4 group"
+        >
+          <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+            <Calendar className="w-6 h-6" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[11px] font-bold text-slate-400">Usia Anak</p>
+            <h4 className="text-sm font-extrabold text-slate-800 truncate">
+              {latestAgeMonths} Bulan ({Math.floor(latestAgeMonths / 12)} Tahun)
+            </h4>
+          </div>
+          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-500 transition-colors" />
         </div>
 
-        {/* 🎨 Judul Utama Dua Baris (Sejajar & Terjaga di Segala Ukuran Layar) */}
-        <div className="flex flex-col items-center justify-center flex-1 px-1 sm:px-2 overflow-hidden">
-          
-          {/* Baris 1: BABY HOPE */}
-          <div className="whitespace-nowrap py-0.5">
-            {line1.split("").map((char, index) => {
-              if (char === " ") return <span key={index} className="inline-block w-2 sm:w-4" />;
-              return (
-                <span
-                  key={index}
-                  className="inline-block font-black text-2xl sm:text-5xl md:text-6xl bg-gradient-to-b from-red-500 via-amber-500 to-yellow-400 bg-clip-text text-transparent filter drop-shadow-[0_4px_3px_rgba(0,0,0,0.15)] cursor-default select-none"
-                  style={{ WebkitTextStroke: '1px rgba(255,255,255,0.9)' }}
-                >
-                  {char}
-                </span>
-              );
-            })}
+        {/* KARTU 2: Status Pertumbuhan */}
+        <div
+          onClick={() => onSelectModule('pertumbuhan')}
+          className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm hover:shadow-md hover:border-emerald-400 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer flex items-center gap-4 group"
+        >
+          <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+            <HeartPulse className="w-6 h-6" />
           </div>
-
-          {/* Baris 2: PLAYGROUND */}
-          <div className="whitespace-nowrap py-0.5">
-            {line2.split("").map((char, index) => {
-              return (
-                <span
-                  key={index}
-                  className="inline-block font-black text-xl sm:text-4xl md:text-5xl bg-gradient-to-b from-sky-400 via-indigo-500 to-purple-600 bg-clip-text text-transparent filter drop-shadow-[0_4px_3px_rgba(0,0,0,0.15)] cursor-default select-none"
-                  style={{ WebkitTextStroke: '1px rgba(255,255,255,0.9)' }}
-                >
-                  {char}
-                </span>
-              );
-            })}
+          <div className="flex-1 min-w-0">
+            <p className="text-[11px] font-bold text-slate-400">Status Pertumbuhan</p>
+            <h4 className="text-sm font-extrabold text-slate-800 truncate">
+              {growthStatus}
+            </h4>
           </div>
-
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-sky-900/90 font-black text-[11px] sm:text-base mt-2 tracking-wide sm:tracking-wider flex items-center justify-center gap-1 bg-sky-100/80 px-3 sm:px-4 py-1 rounded-full border border-sky-200/80 shadow-inner max-w-full"
-          >
-            <span className="truncate">Pilih modul belajar seru untuk si kecil!</span>
-            <span>✨</span>
-          </motion.div>
+          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-500 transition-colors" />
         </div>
 
-        {/* 🎈 Balon Realistis 3D Interaktif (Kanan) */}
-        <div className="relative flex flex-col items-center shrink-0">
-          <motion.div
-            animate={balloonBouncing ? { scale: [1, 1.3, 0.9, 1.1, 1], rotate: [0, -15, 15, 0] } : {
-              y: [0, -10, 0],
-              rotate: [0, 5, -5, 0]
-            }}
-            transition={{
-              duration: 3,
-              repeat: balloonBouncing ? 0 : Infinity,
-              ease: "easeInOut"
-            }}
-            whileHover={{ scale: 1.15 }}
-            whileTap={{ scale: 0.85 }}
-            onClick={handleBalloonClick}
-            className="cursor-pointer select-none focus:outline-none flex flex-col items-center"
-            title="Klik balon!"
+        {/* KARTU 3: Imunisasi Terakhir / Campak MR */}
+        <div
+          onClick={() => onSelectModule('imunisasi')}
+          className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm hover:shadow-md hover:border-purple-300 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer flex items-center gap-4 group"
+        >
+          <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-500 flex items-center justify-center shrink-0 group-hover:bg-purple-500 group-hover:text-white transition-colors">
+            <ShieldCheck className="w-6 h-6" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[11px] font-bold text-slate-400">Imunisasi Terakhir</p>
+            <h4 className="text-sm font-extrabold text-slate-800 truncate">
+              Campak / MR ({campakStatus ? 'Lengkap' : 'Belum Lengkap'})
+            </h4>
+          </div>
+          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-purple-500 transition-colors" />
+        </div>
+
+      </div>
+
+      {/* Akses Cepat Fitur */}
+      <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 space-y-4">
+        <h3 className="text-sm font-extrabold text-slate-800">Menu Akses Cepat</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <button
+            onClick={() => onSelectModule('basata')}
+            className="p-4 bg-slate-50 hover:bg-emerald-50 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-all flex flex-col items-center text-center gap-2 group"
           >
-            <div className="w-8 h-10 sm:w-14 sm:h-16 bg-gradient-to-tr from-rose-600 via-red-500 to-pink-400 rounded-[50%_50%_50%_50%/40%_40%_60%_60%] shadow-[inset_-3px_-3px_6px_rgba(0,0,0,0.3),_0_6px_12px_rgba(225,29,72,0.35)] relative">
-              <div className="absolute top-1.5 left-1.5 w-2.5 h-3.5 sm:w-4 sm:h-5 bg-white/70 rounded-full rotate-[-30deg]" />
-              <div className="absolute top-2.5 left-3 w-1 h-1 sm:w-2 sm:h-2 bg-white/90 rounded-full" />
-              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-1.5 sm:w-3 sm:h-2 bg-rose-700 rounded-b-sm" />
+            <div className="p-3 bg-emerald-100 text-[#00A884] rounded-xl group-hover:scale-110 transition-transform">
+              <Baby className="w-5 h-5" />
             </div>
+            <span className="text-xs font-bold text-slate-700">Modul Basata</span>
+          </button>
 
-            <svg className="w-3 h-6 sm:h-10 text-rose-400 -mt-0.5 overflow-visible" viewBox="0 0 20 40">
-              <path
-                d="M 10 0 Q 15 10 10 20 T 10 40"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-              />
-            </svg>
-          </motion.div>
-        </div>
-
-      </div>
-      {/* ----------------- END HEADER AREA ----------------- */}
-
-      {/* Grid Tombol Modul Playground */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-5 mt-2">
-        {modules.map((item, idx) => (
-          <motion.button
-            key={item.id}
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: idx * 0.05, type: 'spring', stiffness: 150 }}
-            whileHover={{ scale: 1.07, y: -5 }}
-            whileTap={{ scale: 0.93, y: 3 }}
-            onClick={() => onSelectModule(item.id)}
-            className={`bg-gradient-to-b ${item.bgGradient} p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl text-white font-black flex flex-col items-center justify-center border-b-[5px] sm:border-b-[6px] ${item.borderColor} shadow-lg sm:shadow-xl ${item.shadowColor} cursor-pointer transition-all relative overflow-hidden group`}
+          <button
+            onClick={() => onSelectModule('balita')}
+            className="p-4 bg-slate-50 hover:bg-emerald-50 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-all flex flex-col items-center text-center gap-2 group"
           >
-            <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/20 rounded-t-2xl sm:rounded-t-3xl pointer-events-none" />
-            
-            <span className="text-4xl sm:text-6xl mb-2 sm:mb-3 drop-shadow-md group-hover:scale-110 transition-transform">
-              {item.icon}
-            </span>
-            
-            <span className="text-xs sm:text-lg leading-tight drop-shadow-md text-white font-black">
-              {item.name}
-            </span>
-          </motion.button>
-        ))}
-      </div>
-    </motion.div>
-  );
-};
+            <div className="p-3 bg-emerald-100 text-[#00A884] rounded-xl group-hover:scale-110 transition-transform">
+              <BookOpen className="w-5 h-5" />
+            </div>
+            <span className="text-xs font-bold text-slate-700">Modul Balita</span>
+          </button>
 
-export default Dashboard;
+          <button
+            onClick={() => onSelectModule('nutrisi')}
+            className="p-4 bg-slate-50 hover:bg-emerald-50 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-all flex flex-col items-center text-center gap-2 group"
+          >
+            <div className="p-3 bg-emerald-100 text-[#00A884] rounded-xl group-hover:scale-110 transition-transform">
+              <Utensils className="w-5 h-5" />
+            </div>
+            <span className="text-xs font-bold text-slate-700">MPASI & Nutrisi</span>
+          </button>
+
+          <button
+            onClick={() => onSelectModule('edukasi')}
+            className="p-4 bg-slate-50 hover:bg-emerald-50 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-all flex flex-col items-center text-center gap-2 group"
+          >
+            <div className="p-3 bg-emerald-100 text-[#00A884] rounded-xl group-hover:scale-110 transition-transform">
+              <BookOpen className="w-5 h-5" />
+            </div>
+            <span className="text-xs font-bold text-slate-700">Edukasi Parenting</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
