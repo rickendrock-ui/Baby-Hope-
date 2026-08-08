@@ -15,17 +15,47 @@ import {
   Trash2,
   Check,
   Award,
-  ChevronRight
+  ChevronRight,
+  ArrowLeft
 } from 'lucide-react';
 
 import Dashboard from './components/Dashboard';
 import BalitaStimulasi from './components/BalitaStimulasi';
 
 export function App() {
+  // ==========================================
+  // STATE NAVIGASI & RIWAYAT (HISTORY STACK)
+  // ==========================================
   const [activeMenu, setActiveMenu] = useState<string>('dashboard');
+  const [navigationHistory, setNavigationHistory] = useState<string[]>(['dashboard']);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
+  // Fungsi Navigasi Maju (Menyimpan Riwayat Menu)
+  const handleNavigate = (targetMenu: string) => {
+    if (targetMenu !== activeMenu) {
+      setNavigationHistory((prevHistory) => [...prevHistory, targetMenu]);
+      setActiveMenu(targetMenu);
+    }
+    setIsSidebarOpen(false);
+  };
+
+  // Fungsi Tombol Kembali (Kembali ke Menu Sebelumnya)
+  const handleGoBack = () => {
+    if (navigationHistory.length > 1) {
+      const newHistory = [...navigationHistory];
+      newHistory.pop(); // Hapus halaman saat ini dari stack
+      const previousMenu = newHistory[newHistory.length - 1]; // Ambil menu sebelumnya
+      
+      setNavigationHistory(newHistory);
+      setActiveMenu(previousMenu);
+    } else {
+      setActiveMenu('dashboard');
+    }
+  };
+
+  // ==========================================
   // STATE CATATAN & STATUS PERTUMBUHAN
+  // ==========================================
   const [growthLogs, setGrowthLogs] = useState([
     { id: 1, date: '2026-08-01', ageMonths: 24, weight: 12.2, height: 87.5, headCirc: 48 },
     { id: 2, date: '2026-06-01', ageMonths: 22, weight: 11.8, height: 85.0, headCirc: 47.5 },
@@ -58,7 +88,9 @@ export function App() {
     return { status: 'Ideal (Standar WHO)', color: 'bg-emerald-100 text-emerald-800' };
   };
 
+  // ==========================================
   // STATE JADWAL & STATUS IMUNISASI
+  // ==========================================
   const [vaccines, setVaccines] = useState([
     { id: 1, name: 'Hepatitis B (HB-0)', age: '0 Bulan', done: true },
     { id: 2, name: 'BCG & Polio 1', age: '1 Bulan', done: true },
@@ -77,7 +109,9 @@ export function App() {
 
   const campakStatus = vaccines.filter(v => v.name.includes('Campak') && v.done).length >= 2;
 
+  // ==========================================
   // STATE MPASI & NUTRISI
+  // ==========================================
   const [mpasiCategory, setMpasiCategory] = useState<'6-8' | '9-11' | '12-24'>('6-8');
 
   const mpasiData = {
@@ -107,7 +141,9 @@ export function App() {
     }
   };
 
+  // ==========================================
   // STATE EDUKASI PARENTING
+  // ==========================================
   const [selectedArticle, setSelectedArticle] = useState<any>(null);
 
   const articles = [
@@ -172,7 +208,7 @@ export function App() {
         </button>
       </div>
 
-      {/* SIDEBAR KIRI */}
+      {/* ================= SIDEBAR KIRI ================= */}
       <aside
         className={`fixed md:static inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-100 p-6 flex flex-col justify-between transform transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
@@ -202,10 +238,7 @@ export function App() {
                 return (
                   <button
                     key={item.id}
-                    onClick={() => {
-                      setActiveMenu(item.id);
-                      setIsSidebarOpen(false);
-                    }}
+                    onClick={() => handleNavigate(item.id)}
                     className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all text-left ${
                       isActive
                         ? 'bg-[#00A884] text-white shadow-md shadow-emerald-200'
@@ -234,19 +267,36 @@ export function App() {
         />
       )}
 
-      {/* KONTEN UTAMA */}
+      {/* ================= KONTEN UTAMA KANAN ================= */}
       <main className="flex-1 p-4 md:p-8 overflow-y-auto relative">
+        
+        {/* Tombol Favorit */}
         <div className="absolute top-6 right-8 hidden md:block">
           <div className="w-9 h-9 bg-amber-100 rounded-full flex items-center justify-center text-amber-500 shadow-sm cursor-pointer hover:scale-105 transition-transform">
             <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
           </div>
         </div>
 
-        {/* DASHBOARD */}
+        {/* ===================================================
+            TOMBOL KEMBALI INTERAKTIF (BERDASARKAN RIWAYAT)
+           =================================================== */}
+        {activeMenu !== 'dashboard' && (
+          <div className="max-w-4xl mx-auto mb-4">
+            <button
+              onClick={handleGoBack}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-2xl border border-slate-200/80 shadow-sm transition-all hover:-translate-x-1 active:scale-95 cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4 text-[#00A884]" />
+              <span>Kembali</span>
+            </button>
+          </div>
+        )}
+
+        {/* 1. DASHBOARD */}
         {activeMenu === 'dashboard' && (
           <div className="max-w-5xl mx-auto">
             <Dashboard
-              onSelectModule={(mod) => setActiveMenu(mod)}
+              onSelectModule={(mod) => handleNavigate(mod)}
               growthStatus={latestLog ? getGrowthStatus(latestLog.weight).status : 'Ideal (Standar WHO)'}
               campakStatus={campakStatus}
               latestAgeMonths={latestLog ? latestLog.ageMonths : 24}
@@ -254,7 +304,7 @@ export function App() {
           </div>
         )}
 
-        {/* MODUL BASATA */}
+        {/* 2. MODUL BASATA */}
         {activeMenu === 'basata' && (
           <div className="max-w-4xl mx-auto bg-white rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100">
             <div className="text-center space-y-3 mb-8">
@@ -318,10 +368,10 @@ export function App() {
           </div>
         )}
 
-        {/* MODUL BALITA */}
+        {/* 3. MODUL BALITA */}
         {activeMenu === 'balita' && <BalitaStimulasi />}
 
-        {/* CATATAN & STATUS PERTUMBUHAN */}
+        {/* 4. CATATAN & STATUS PERTUMBUHAN */}
         {activeMenu === 'pertumbuhan' && (
           <div className="max-w-4xl mx-auto space-y-6">
             <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-slate-100">
@@ -456,7 +506,7 @@ export function App() {
           </div>
         )}
 
-        {/* JADWAL & REKAM IMUNISASI */}
+        {/* 5. JADWAL & REKAM IMUNISASI */}
         {activeMenu === 'imunisasi' && (
           <div className="max-w-4xl mx-auto space-y-6">
             <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-slate-100">
@@ -517,7 +567,7 @@ export function App() {
           </div>
         )}
 
-        {/* MPASI & NUTRISI */}
+        {/* 6. MPASI & NUTRISI */}
         {activeMenu === 'nutrisi' && (
           <div className="max-w-4xl mx-auto space-y-6">
             <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-slate-100">
@@ -571,7 +621,7 @@ export function App() {
           </div>
         )}
 
-        {/* EDUKASI PARENTING */}
+        {/* 7. EDUKASI PARENTING */}
         {activeMenu === 'edukasi' && (
           <div className="max-w-4xl mx-auto space-y-6">
             <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-slate-100">
