@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Dashboard from './components/Dashboard';
+
 import NumberModule from './modules/NumberModule';
 import { ColorModule } from './modules/ColorModule';
 import { ShapeModule } from './modules/ShapeModule';
@@ -14,22 +15,24 @@ export const App: React.FC = () => {
     return savedStars ? parseInt(savedStars, 10) : 0;
   });
 
-  const [activeModule, setActiveModule] = useState<string | null>(() => {
-    return localStorage.getItem('activeModule') || null;
-  });
+  // Set default activeModule ke null agar saat refresh SELALU kembali ke Dashboard
+  const [activeModule, setActiveModule] = useState<string | null>(null);
 
   useEffect(() => {
     localStorage.setItem('stars', stars.toString());
   }, [stars]);
 
+  // Bersihkan data modul lama jika pernah tersimpan di browser
+  useEffect(() => {
+    localStorage.removeItem('activeModule');
+  }, []);
+
   const handleSelectModule = (moduleName: string) => {
     setActiveModule(moduleName);
-    localStorage.setItem('activeModule', moduleName);
   };
 
   const handleBackToDashboard = () => {
     setActiveModule(null);
-    localStorage.removeItem('activeModule');
   };
 
   const handleAddStar = () => {
