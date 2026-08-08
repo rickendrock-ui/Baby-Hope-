@@ -43,8 +43,8 @@ export function App() {
   const handleGoBack = () => {
     if (navigationHistory.length > 1) {
       const newHistory = [...navigationHistory];
-      newHistory.pop(); // Hapus halaman saat ini dari stack
-      const previousMenu = newHistory[newHistory.length - 1]; // Ambil menu sebelumnya
+      newHistory.pop();
+      const previousMenu = newHistory[newHistory.length - 1];
       
       setNavigationHistory(newHistory);
       setActiveMenu(previousMenu);
@@ -192,12 +192,14 @@ export function App() {
       {/* Header Mobile Toggle */}
       <div className="md:hidden bg-white px-4 py-3 flex items-center justify-between border-b border-slate-200 sticky top-0 z-50">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-cyan-500 text-white font-extrabold flex items-center justify-center text-sm">
-            H
-          </div>
+          <img
+            src="/icon-192.png"
+            alt="Baby Hope Logo"
+            className="w-10 h-10 rounded-full object-cover border border-emerald-100 shadow-sm"
+          />
           <div>
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">HALO,</p>
-            <p className="text-sm font-extrabold text-slate-700 -mt-1">hope</p>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">APLIKASI</p>
+            <p className="text-sm font-extrabold text-[#00A884] -mt-1">Baby Hope</p>
           </div>
         </div>
         <button
@@ -215,13 +217,16 @@ export function App() {
         }`}
       >
         <div className="space-y-6">
-          <div className="bg-slate-50 border border-slate-100 p-3.5 rounded-2xl flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#00A884] text-white font-extrabold flex items-center justify-center text-base shadow-sm">
-              H
-            </div>
+          {/* LOGO BRAND SIDEBAR */}
+          <div className="bg-emerald-50/50 border border-emerald-100/80 p-3.5 rounded-2xl flex items-center gap-3">
+            <img
+              src="/icon-192.png"
+              alt="Baby Hope Logo"
+              className="w-12 h-12 rounded-xl object-contain shadow-sm bg-white p-0.5"
+            />
             <div>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">HALO,</p>
-              <h3 className="text-base font-extrabold text-slate-800 leading-none">hope</h3>
+              <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider">APLIKASI</p>
+              <h3 className="text-base font-extrabold text-slate-800 leading-none">Baby Hope</h3>
             </div>
           </div>
 
@@ -277,9 +282,7 @@ export function App() {
           </div>
         </div>
 
-        {/* ===================================================
-            TOMBOL KEMBALI INTERAKTIF (BERDASARKAN RIWAYAT)
-           =================================================== */}
+        {/* TOMBOL KEMBALI INTERAKTIF */}
         {activeMenu !== 'dashboard' && (
           <div className="max-w-4xl mx-auto mb-4">
             <button
@@ -308,8 +311,8 @@ export function App() {
         {activeMenu === 'basata' && (
           <div className="max-w-4xl mx-auto bg-white rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100">
             <div className="text-center space-y-3 mb-8">
-              <div className="w-14 h-14 bg-emerald-100 text-[#00A884] rounded-2xl flex items-center justify-center mx-auto shadow-sm">
-                <Baby className="w-8 h-8" />
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto shadow-sm overflow-hidden border border-emerald-100">
+                <img src="/icon-192.png" alt="Baby Hope Logo" className="w-full h-full object-cover" />
               </div>
               <h2 className="text-2xl md:text-3xl font-extrabold text-[#00A884]">
                 Modul Basata (Bawah Satu Tahun)
