@@ -1,26 +1,11 @@
-// Ganti versi cache ini (misal: 'v2', 'v3') setiap kali Anda memperbarui aplikasi
-const CACHE_NAME = 'app-cache-v2'; // Naikkan versi dari v1 ke v2
+const CACHE_NAME = 'app-cache-v3';
 
-// Daftar file yang disimpan agar bisa dibuka offline
-const ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png'
-  // Tambahkan file .css atau .js lain jika ada
-];
-
-// 1. Install Service Worker & Simpan Cache
+// 1. Install & langsung aktifkan Service Worker baru
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
-    })
-  );
+  self.skipWaiting();
 });
 
-// 2. Hapus Cache Lama Saat Ada Versi Baru
+// 2. Bersihkan cache lama saat versi diperbarui
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -36,8 +21,24 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// 3. Ambil Data dari Cache Saat Offline
+// 3. Strategi Network-First untuk navigasi (Mencegah Layar Blank / 404 pada Hash Vite)
 self.addEventListener('fetch', (event) => {
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Untuk aset statis lainnya
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       return cachedResponse || fetch(event.request);
@@ -45,7 +46,7 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// 4. Menerima Sinyal dari Halaman Utama untuk Segera Memperbarui
+// 4. Menerima sinyal skipWaiting dari PWA Update Banner
 self.addEventListener('message', (event) => {
   if (event.data && event.data.action === 'skipWaiting') {
     self.skipWaiting();
