@@ -1,13 +1,91 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Baby Hope Playground</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplikasi Saya</title>
+
+  <!-- PWA Metadata -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#007bff">
+
+  <!-- Pengaturan Khusus iOS (Safari) -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AppSaya">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <style>
+    /* Desain Banner Notifikasi Update */
+    #update-banner {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #323232;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      z-index: 9999;
+      align-items: center;
+      gap: 15px;
+      font-family: sans-serif;
+    }
+
+    #update-banner button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Konten Utama Aplikasi Anda -->
+  <h1>Aplikasi Berhasil Berjalan!</h1>
+
+  <!-- Banner Notifikasi Pembaruan -->
+  <div id="update-banner">
+    <span>Versi baru tersedia!</span>
+    <button id="btn-update">Perbarui</button>
+  </div>
+
+  <script>
+    let newWorker;
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').then((reg) => {
+        // Cek jika ada Service Worker baru yang sedang menunggu
+        reg.addEventListener('updatefound', () => {
+          newWorker = reg.installing;
+          
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // Tampilkan banner notifikasi jika ada versi baru
+              document.getElementById('update-banner').style.display = 'flex';
+            }
+          });
+        });
+      });
+
+      // Muat ulang otomatis halaman begitu pembaruan diterapkan
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
+      });
+    }
+
+    // Tombol Perbarui diklik
+    document.getElementById('btn-update').addEventListener('click', () => {
+      if (newWorker) {
+        newWorker.postMessage({ action: 'skipWaiting' });
+      }
+    });
+  </script>
+</body>
 </html>

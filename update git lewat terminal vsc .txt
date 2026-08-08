@@ -5,3 +5,5 @@ update git 1 1:
 git add .  enter
 git commit -m "update cepat"   enter
 git push  enter
+
+npm run dev    Untuk cari server local
