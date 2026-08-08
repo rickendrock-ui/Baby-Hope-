@@ -1,132 +1,194 @@
-import React from 'react';
-import { Calendar, HeartPulse, ShieldCheck, ChevronRight, Baby, BookOpen, Utensils } from 'lucide-react';
+// src/components/Dashboard.tsx
+import { useState } from 'react';
+import { playPopSound, speakText } from '../utils/audio';
 
 interface DashboardProps {
-  onSelectModule: (moduleName: string) => void;
-  growthStatus?: string;
-  campakStatus?: boolean;
-  latestAgeMonths?: number;
+  userName?: string;
+  stars?: number;
+  onBack?: () => void;
+  onResetProgress?: () => void;
 }
 
-export default function Dashboard({
-  onSelectModule,
-  growthStatus = 'Ideal (Standar WHO)',
-  campakStatus = true,
-  latestAgeMonths = 24
-}: DashboardProps) {
+export const Dashboard = ({
+  userName = 'Si Kecil',
+  stars = 0,
+  onBack,
+  onResetProgress,
+}: DashboardProps) => {
+  const [playTimeLimit, setPlayTimeLimit] = useState<number>(30);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
+
+  const handleBack = () => {
+    playPopSound();
+    if (onBack) onBack();
+  };
+
+  const handleReset = () => {
+    playPopSound();
+    if (window.confirm('Apakah Anda yakin ingin meriset seluruh progres dan bintang Si Kecil?')) {
+      if (onResetProgress) onResetProgress();
+      speakText('Progres berhasil diriset');
+    }
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Banner Sapaan */}
-      <div className="bg-gradient-to-r from-[#00A884] to-teal-600 rounded-3xl p-6 md:p-8 text-white shadow-lg">
-        <h1 className="text-2xl md:text-3xl font-black">Selamat Datang di Baby Hope! 👋</h1>
-        <p className="text-xs md:text-sm text-emerald-100 mt-2 font-medium">
-          Pantau tumbuh kembang, jadwal imunisasi, dan nutrisi si kecil secara terpadu di satu tempat.
-        </p>
+    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '16px', fontFamily: 'sans-serif' }}>
+      {/* Header Dashboard */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2 style={{ margin: 0, color: '#1E293B', fontSize: '24px' }}>📊 Dashboard Orang Tua</h2>
+        {onBack && (
+          <button
+            onClick={handleBack}
+            className="bouncy-card"
+            style={{
+              padding: '8px 16px',
+              borderRadius: '14px',
+              background: '#64748B',
+              color: '#FFFFFF',
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              fontSize: '14px'
+            }}
+          >
+            ⬅️ Kembali
+          </button>
+        )}
       </div>
 
-      {/* ===================================================
-          3 KARTU INTERAKTIF (LANGSUNG BISA DIKLIK)
-         =================================================== */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Kartu Profil Anak & Bintang */}
+      <div style={{
+        background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
+        borderRadius: '24px',
+        padding: '20px',
+        color: '#FFFFFF',
+        marginBottom: '20px',
+        boxShadow: '0 8px 20px rgba(139, 92, 246, 0.25)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+          <span style={{ fontSize: '40px' }} className="floating-icon">👑</span>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '22px' }}>{userName}</h3>
+            <span style={{ fontSize: '14px', opacity: 0.9 }}>Level Belajar: {Math.floor(stars / 10) + 1}</span>
+          </div>
+        </div>
+
+        <div style={{
+          display: 'flex',
+          gap: '16px',
+          background: 'rgba(255, 255, 255, 0.2)',
+          padding: '12px 16px',
+          borderRadius: '16px',
+          fontWeight: 'bold',
+          fontSize: '16px'
+        }}>
+          <div>⭐ Total Bintang: {stars}</div>
+          <div>🎯 Poin Prestasi: {stars * 10}</div>
+        </div>
+      </div>
+
+      {/* Ringkasan Aktivitas Belajar */}
+      <div style={{
+        background: '#FFFFFF',
+        borderRadius: '20px',
+        padding: '20px',
+        marginBottom: '20px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+        border: '1px solid #E2E8F0'
+      }}>
+        <h3 style={{ margin: '0 0 14px 0', color: '#1E293B', fontSize: '18px' }}>📈 Progres Modul</h3>
         
-        {/* KARTU 1: Usia Anak */}
-        <div
-          onClick={() => onSelectModule('balita')}
-          className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-300 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer flex items-center gap-4 group"
-        >
-          <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0 group-hover:bg-blue-500 group-hover:text-white transition-colors">
-            <Calendar className="w-6 h-6" />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#F8FAFC', borderRadius: '12px' }}>
+            <span>🔤 Abjad & Angka</span>
+            <strong style={{ color: '#22C55E' }}>Sering Dimainkan</strong>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-bold text-slate-400">Usia Anak</p>
-            <h4 className="text-sm font-extrabold text-slate-800 truncate">
-              {latestAgeMonths} Bulan ({Math.floor(latestAgeMonths / 12)} Tahun)
-            </h4>
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#F8FAFC', borderRadius: '12px' }}>
+            <span>🎨 Warna & Bentuk</span>
+            <strong style={{ color: '#3B82F6' }}>Bagus</strong>
           </div>
-          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-500 transition-colors" />
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#F8FAFC', borderRadius: '12px' }}>
+            <span>🎹 Musik & Suara Hewan</span>
+            <strong style={{ color: '#A855F7' }}>Aktif</strong>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#F8FAFC', borderRadius: '12px' }}>
+            <span>🧩 Kuis & Cocok Gambar</span>
+            <strong style={{ color: '#F59E0B' }}>Siap Dilatih</strong>
+          </div>
         </div>
-
-        {/* KARTU 2: Status Pertumbuhan */}
-        <div
-          onClick={() => onSelectModule('pertumbuhan')}
-          className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm hover:shadow-md hover:border-emerald-400 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer flex items-center gap-4 group"
-        >
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-            <HeartPulse className="w-6 h-6" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-bold text-slate-400">Status Pertumbuhan</p>
-            <h4 className="text-sm font-extrabold text-slate-800 truncate">
-              {growthStatus}
-            </h4>
-          </div>
-          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-500 transition-colors" />
-        </div>
-
-        {/* KARTU 3: Imunisasi Terakhir / Campak MR */}
-        <div
-          onClick={() => onSelectModule('imunisasi')}
-          className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm hover:shadow-md hover:border-purple-300 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer flex items-center gap-4 group"
-        >
-          <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-500 flex items-center justify-center shrink-0 group-hover:bg-purple-500 group-hover:text-white transition-colors">
-            <ShieldCheck className="w-6 h-6" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-bold text-slate-400">Imunisasi Terakhir</p>
-            <h4 className="text-sm font-extrabold text-slate-800 truncate">
-              Campak / MR ({campakStatus ? 'Lengkap' : 'Belum Lengkap'})
-            </h4>
-          </div>
-          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-purple-500 transition-colors" />
-        </div>
-
       </div>
 
-      {/* Akses Cepat Fitur */}
-      <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 space-y-4">
-        <h3 className="text-sm font-extrabold text-slate-800">Menu Akses Cepat</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <button
-            onClick={() => onSelectModule('basata')}
-            className="p-4 bg-slate-50 hover:bg-emerald-50 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-all flex flex-col items-center text-center gap-2 group"
-          >
-            <div className="p-3 bg-emerald-100 text-[#00A884] rounded-xl group-hover:scale-110 transition-transform">
-              <Baby className="w-5 h-5" />
-            </div>
-            <span className="text-xs font-bold text-slate-700">Modul Basata</span>
-          </button>
+      {/* Kontrol & Pengaturan Orang Tua */}
+      <div style={{
+        background: '#FFFFFF',
+        borderRadius: '20px',
+        padding: '20px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+        border: '1px solid #E2E8F0'
+      }}>
+        <h3 style={{ margin: '0 0 16px 0', color: '#1E293B', fontSize: '18px' }}>⚙️ Pengaturan Orang Tua</h3>
 
-          <button
-            onClick={() => onSelectModule('balita')}
-            className="p-4 bg-slate-50 hover:bg-emerald-50 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-all flex flex-col items-center text-center gap-2 group"
+        <div style={{ marginBottom: '16px' }}>
+          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '6px', color: '#475569', fontSize: '14px' }}>
+            ⏱️ Batas Waktu Main Balita:
+          </label>
+          <select
+            value={playTimeLimit}
+            onChange={(e) => setPlayTimeLimit(Number(e.target.value))}
+            style={{
+              width: '100%',
+              padding: '12px',
+              borderRadius: '12px',
+              border: '2px solid #CBD5E1',
+              fontSize: '15px',
+              fontWeight: 'bold',
+              outline: 'none'
+            }}
           >
-            <div className="p-3 bg-emerald-100 text-[#00A884] rounded-xl group-hover:scale-110 transition-transform">
-              <BookOpen className="w-5 h-5" />
-            </div>
-            <span className="text-xs font-bold text-slate-700">Modul Balita</span>
-          </button>
-
-          <button
-            onClick={() => onSelectModule('nutrisi')}
-            className="p-4 bg-slate-50 hover:bg-emerald-50 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-all flex flex-col items-center text-center gap-2 group"
-          >
-            <div className="p-3 bg-emerald-100 text-[#00A884] rounded-xl group-hover:scale-110 transition-transform">
-              <Utensils className="w-5 h-5" />
-            </div>
-            <span className="text-xs font-bold text-slate-700">MPASI & Nutrisi</span>
-          </button>
-
-          <button
-            onClick={() => onSelectModule('edukasi')}
-            className="p-4 bg-slate-50 hover:bg-emerald-50 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-all flex flex-col items-center text-center gap-2 group"
-          >
-            <div className="p-3 bg-emerald-100 text-[#00A884] rounded-xl group-hover:scale-110 transition-transform">
-              <BookOpen className="w-5 h-5" />
-            </div>
-            <span className="text-xs font-bold text-slate-700">Edukasi Parenting</span>
-          </button>
+            <option value={15}>15 Menit / Hari</option>
+            <option value={30}>30 Menit / Hari</option>
+            <option value={45}>45 Menit / Hari</option>
+            <option value={60}>60 Menit / Hari</option>
+          </select>
         </div>
+
+        <div style={{
+          marginBottom: '20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '8px 0'
+        }}>
+          <span style={{ fontWeight: 'bold', color: '#475569', fontSize: '15px' }}>🔊 Efek Suara & Narasi</span>
+          <input
+            type="checkbox"
+            checked={soundEnabled}
+            onChange={(e) => setSoundEnabled(e.target.checked)}
+            style={{ width: '22px', height: '22px', cursor: 'pointer' }}
+          />
+        </div>
+
+        <button
+          onClick={handleReset}
+          className="bouncy-card"
+          style={{
+            width: '100%',
+            padding: '14px',
+            borderRadius: '14px',
+            background: '#EF4444',
+            color: '#FFFFFF',
+            border: 'none',
+            fontWeight: 'bold',
+            fontSize: '15px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(239, 68, 68, 0.25)'
+          }}
+        >
+          🗑️ Riset Seluruh Progres
+        </button>
       </div>
     </div>
   );
-}
+};
+
+export default Dashboard;
